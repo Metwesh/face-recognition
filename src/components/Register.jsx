@@ -11,13 +11,13 @@ class Register extends React.Component {
     };
   }
   onNameChange = (event) => {
-    this.setState({ signUpName: event.target.value, signUpFailed: true });
+    this.setState({ signUpName: event.target.value, signUpFailed: false });
   };
   onEmailChange = (event) => {
-    this.setState({ signUpEmail: event.target.value, signUpFailed: true });
+    this.setState({ signUpEmail: event.target.value, signUpFailed: false });
   };
   onPasswordChange = (event) => {
-    this.setState({ signUpPassword: event.target.value, signUpFailed: true });
+    this.setState({ signUpPassword: event.target.value, signUpFailed: false });
   };
 
   onSubmitSignUp = () => {
