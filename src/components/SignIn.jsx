@@ -33,7 +33,8 @@ class SignIn extends React.Component {
         } else {
           this.setState({ signInFailed: true });
         }
-      });
+      })
+      .catch((error) => console.log(error));
   };
 
   render() {

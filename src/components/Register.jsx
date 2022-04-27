@@ -38,7 +38,8 @@ class Register extends React.Component {
         } else {
           this.setState({ signUpFailed: true });
         }
-      });
+      })
+      .catch((error) => console.log(error));
   };
 
   render() {
