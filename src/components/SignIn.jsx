@@ -17,7 +17,7 @@ class SignIn extends React.Component {
   };
 
   onSubmitSignIn = () => {
-    fetch("https://safe-hollows-95641.herokuapp.com/signin", {
+    fetch(process.env.REACT_APP_SIGNIN, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -69,6 +69,7 @@ class SignIn extends React.Component {
                   type="email"
                   name="email-address"
                   id="email-address"
+                  autoComplete="off"
                   required
                   onChange={this.onEmailChange}
                 />

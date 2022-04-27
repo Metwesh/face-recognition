@@ -1,81 +1,10 @@
 import React, { Component } from "react";
-import "./App.css";
 import Navigation from "./components/Navigation";
 import ImageLinkForm from "./components/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition";
 import Rank from "./components/Rank";
-import Particles from "react-tsparticles";
 import SignIn from "./components/SignIn";
 import Register from "./components/Register";
-
-const particlesOptions = {
-  fpsLimit: 60,
-  interactivity: {
-    events: {
-      onClick: {
-        enable: true,
-        mode: "push",
-      },
-      resize: true,
-    },
-    modes: {
-      bubble: {
-        distance: 100,
-        duration: 1,
-        opacity: 0.8,
-        size: 40,
-      },
-      push: {
-        quantity: 2,
-      },
-      repulse: {
-        distance: 100,
-        duration: 0.4,
-      },
-    },
-  },
-  particles: {
-    color: {
-      value: "#000",
-    },
-    links: {
-      color: "#000",
-      distance: 180,
-      enable: true,
-      opacity: 0.7,
-      width: 1,
-    },
-    collisions: {
-      enable: true,
-    },
-    move: {
-      direction: "none",
-      enable: true,
-      outMode: "bounce",
-      random: false,
-      speed: 1,
-      straight: false,
-    },
-    number: {
-      density: {
-        enable: true,
-        area: 1000,
-      },
-      value: 80,
-    },
-    opacity: {
-      value: 0.5,
-    },
-    shape: {
-      type: "circle",
-    },
-    size: {
-      random: true,
-      value: 5,
-    },
-  },
-  detectRetina: true,
-};
 
 class App extends Component {
   constructor() {
@@ -83,7 +12,7 @@ class App extends Component {
     this.state = {
       input: "",
       imageURL: "",
-      box: {},
+      boxes: [],
       route: "signIn",
       isSignedIn: false,
       user: {
@@ -108,22 +37,23 @@ class App extends Component {
     });
   };
 
-  calculateFaceLocation = (data) => {
-    const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById("inputimage");
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return {
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height,
-      leftCol: clarifaiFace.left_col * width,
-    };
+  calculateFaceLocations = (data) => {
+    return data.outputs[0].data.regions.map((face) => {
+      const clarifaiFace = face.region_info.bounding_box;
+      const image = document.getElementById("inputimage");
+      const width = Number(image.width);
+      const height = Number(image.height);
+      return {
+        topRow: clarifaiFace.top_row * height,
+        rightCol: width - clarifaiFace.right_col * width,
+        bottomRow: height - clarifaiFace.bottom_row * height,
+        leftCol: clarifaiFace.left_col * width,
+      };
+    });
   };
 
-  displayFaceBox = (box) => {
-    this.setState({ box: box });
+  displayFaceBoxes = (boxes) => {
+    this.setState({ boxes: boxes });
   };
 
   onInputChange = (event) => {
@@ -135,7 +65,7 @@ class App extends Component {
       imageURL: this.state.input,
       entries: this.state.user.entries,
     });
-    fetch("https://safe-hollows-95641.herokuapp.com/imageurl", {
+    fetch(process.env.REACT_APP_IMAGE_URL, {
       method: "post",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({
@@ -145,7 +75,7 @@ class App extends Component {
       .then((response) => response.json())
       .then((response) => {
         if (response) {
-          fetch("https://safe-hollows-95641.herokuapp.com/image", {
+          fetch(process.env.REACT_APP_IMAGE, {
             method: "put",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -160,7 +90,7 @@ class App extends Component {
             })
             .catch(console.log);
         }
-        this.displayFaceBox(this.calculateFaceLocation(response));
+        this.displayFaceBoxes(this.calculateFaceLocations(response));
       })
       .catch(console.log);
   };
@@ -174,14 +104,9 @@ class App extends Component {
   };
 
   render() {
-    const { isSignedIn, imageURL, route, box } = this.state;
+    const { isSignedIn, imageURL, route, boxes } = this.state;
     return (
       <div className="App">
-        <Particles
-          className="particles"
-          id="tsparticles"
-          options={particlesOptions}
-        />
         <Navigation
           isSignedIn={isSignedIn}
           onRouteChange={this.onRouteChange}
@@ -197,7 +122,7 @@ class App extends Component {
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
             />
-            <FaceRecognition box={box} imageURL={imageURL} />
+            <FaceRecognition boxes={boxes} imageURL={imageURL} />
           </>
         ) : route === "signIn" ? (
           <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
