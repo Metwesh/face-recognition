@@ -17,7 +17,7 @@ class SignIn extends React.Component {
   };
 
   onSubmitSignIn = () => {
-    fetch(process.env.REACT_APP_SIGNIN, {
+    fetch(`${process.env.REACT_APP_SIGNIN}`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -54,8 +54,7 @@ class SignIn extends React.Component {
     return (
       <div
         className="br2 ba dark-gray b--black-10 w-100 w-50-m w-60-1 mw6 center mv4 pa2 shadow-5"
-        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}
-      >
+        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}>
         <main className="pa4 black-80">
           <div className="measure center">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
