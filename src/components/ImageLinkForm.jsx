@@ -17,10 +17,11 @@ const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
             label="Input image link here"
           >
             <Form.Control
-              type="text"
+              type="url"
               placeholder="Image link"
               autoComplete="off"
               onChange={onInputChange}
+              required
             />
           </FloatingLabel>
           <Button
