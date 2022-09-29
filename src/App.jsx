@@ -178,7 +178,7 @@ export default class App extends Component {
         )}
         {route === "signIn" && (
           <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
-        )}{" "}
+        )}
         {route === "Register" && (
           <Register
             loadUser={this.loadUser}
