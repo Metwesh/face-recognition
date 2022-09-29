@@ -1,10 +1,8 @@
-html {
-  background-image: linear-gradient(135deg, #e458c8 0%, #06b7ca 100%);
-  min-height: 100vh;
-}
-
 body {
+  min-height: 100vh;
   margin: 0;
+  background-image: linear-gradient(135deg, #e458c8 0%, #06b7ca 100%);
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -21,4 +19,13 @@ button {
 
 .App {
   text-align: center;
+}
+
+.loading-spinner {
+  height: 10rem;
+  width: 10rem;
+  border-top-width: none;
+  border-right-width: none;
+  border-bottom-width: none;
+  border-left-width: none;
 }

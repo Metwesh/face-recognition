@@ -1,29 +1,39 @@
-import React from "react";
+import { Button, FloatingLabel, Form } from "react-bootstrap";
 import "./carbon.css";
 
 const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
   return (
-    <div>
+    <>
       <p className="f3">
-        {"This magic brain will detect faces in your pictures. Give it a try!"}
+        This magic brain will detect faces in your pictures. Give it a try!
       </p>
-      <div className="center">
-        <div className="pa4 br3 shadow-5 center carbon w-70">
-          <input
-            className="f4 pa2 w-50 center br4"
-            placeholder="Input image link here"
-            type="text"
-            onChange={onInputChange}
-          />
-          <button
-            className="w-20 dim f4 link ph3 pv2 dib white bg-light-purple pointer br4 mh3"
+      <Form
+        onSubmit={(e) => e.preventDefault()}
+        className="pa4 br3 shadow-5 center carbon w-70"
+      >
+        <div className="flex justify-between">
+          <FloatingLabel
+            controlId="floatingInput"
+            label="Input image link here"
+          >
+            <Form.Control
+              type="text"
+              placeholder="Image link"
+              autoComplete="off"
+              onChange={onInputChange}
+            />
+          </FloatingLabel>
+          <Button
+            type="submit"
+            className="w-20 ph3 pv2 ml4 f-3"
+            variant="outline-light"
             onClick={onButtonSubmit}
           >
             Detect
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </Form>
+    </>
   );
 };
 

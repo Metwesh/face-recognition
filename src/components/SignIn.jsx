@@ -1,6 +1,7 @@
 import React from "react";
+import { Button, FloatingLabel, Form } from "react-bootstrap";
 
-class SignIn extends React.Component {
+export default class SignIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +17,10 @@ class SignIn extends React.Component {
     this.setState({ signInPassword: event.target.value, signInFailed: false });
   };
 
+  saveAuthTokenInSession = (token) => {
+    window.sessionStorage.setItem("token", token);
+  };
+
   onSubmitSignIn = () => {
     fetch(`${process.env.REACT_APP_SIGNIN}`, {
       method: "post",
@@ -26,10 +31,23 @@ class SignIn extends React.Component {
       }),
     })
       .then((response) => response.json())
-      .then((user) => {
-        if (user.id) {
-          this.props.loadUser(user);
-          this.props.onRouteChange("home");
+      .then((data) => {
+        if (data.success === "true") {
+          this.saveAuthTokenInSession(data.token);
+          fetch(`${process.env.REACT_APP_PROFILE}/${data.id}`, {
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${data.token}`,
+            },
+          })
+            .then((response) => response.json())
+            .then((user) => {
+              if (user.name) {
+                this.props.loadUser(user);
+                this.props.onRouteChange("home");
+              }
+            });
         } else {
           this.setState({ signInFailed: true });
         }
@@ -41,67 +59,75 @@ class SignIn extends React.Component {
     const { signInFailed, signInEmail, signInPassword } = this.state;
     let signInMessage;
     if (signInFailed && !signInEmail && !signInPassword) {
-      signInMessage = <p>Please input your credentials</p>;
+      signInMessage = "Please input your credentials";
     } else if (signInFailed && !signInEmail) {
-      signInMessage = <p>Please input your E-mail</p>;
+      signInMessage = "Please input your E-mail";
     } else if (signInFailed && !signInPassword) {
-      signInMessage = <p>Please input your password</p>;
+      signInMessage = "Please input your password";
     } else if (signInFailed) {
-      signInMessage = (
-        <p>Please enter a valid email &amp; password combination</p>
-      );
+      signInMessage = "Please enter a valid email & password combination";
     }
 
     return (
-      <div
+      <Form
+        onSubmit={(e) => e.preventDefault()}
         className="br2 ba dark-gray b--black-10 w-100 w-50-m w-60-1 mw6 center mv4 pa2 shadow-5"
-        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}>
+        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}
+      >
         <main className="pa4 black-80">
-          <div className="measure center">
+          <article className="measure center">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-              <legend className="f3 fw6 ph0 mh0">Sign In</legend>
-              <div className="mt3">
-                <label className="db fw6 lh-copy f6 tl" htmlFor="email-address">
-                  Email
-                </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="email"
-                  name="email-address"
-                  id="email-address"
-                  autoComplete="off"
-                  required
-                  onChange={this.onEmailChange}
-                />
+              <legend className="f3 fw6 ph0 mh0 mb2">Sign In</legend>
+              <div className="mv3">
+                <FloatingLabel
+                  controlId="email-address"
+                  label="Email address"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    placeholder="name@example.com"
+                    name="email-address"
+                    autoComplete="off"
+                    onChange={this.onEmailChange}
+                    required
+                  />
+                </FloatingLabel>
               </div>
               <div className="mv3">
-                <label className="db fw6 lh-copy f6 tl" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="password"
-                  name="password"
-                  id="password"
-                  required
-                  onChange={this.onPasswordChange}
-                />
+                <FloatingLabel controlId="password" label="Password">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    required
+                    onChange={this.onPasswordChange}
+                  />
+                </FloatingLabel>
               </div>
             </fieldset>
             <div className="flex justify-between items-center">
-              <input
-                onClick={this.onSubmitSignIn}
-                className="b ph3 pv2 input-reset ba white bg-black dim pointer f6 dib br4 mv2"
+              <Button
+                variant="dark"
                 type="submit"
-                value="Sign in"
-              />
+                onClick={this.onSubmitSignIn}
+                size="lg"
+              >
+                Sign in
+              </Button>
+              <Button
+                variant="outline-dark"
+                type="button"
+                onClick={() => this.props.onRouteChange("Register")}
+                size="lg"
+              >
+                Register
+              </Button>
             </div>
-          </div>
-          {signInMessage}
+          </article>
+          {signInMessage && <p className="mt4 mb0">{signInMessage}</p>}
         </main>
-      </div>
+      </Form>
     );
   }
 }
-
-export default SignIn;
