@@ -75,7 +75,7 @@ export default class App extends Component {
   };
 
   calculateFaceLocations = (data) => {
-    if (!data.outputs) return;
+    if (!data.outputs) return (this.boxes = []);
     return data.outputs[0].data.regions.map((face) => {
       const clarifaiFace = face.region_info.bounding_box;
       const image = document.getElementById("inputimage");
@@ -91,7 +91,7 @@ export default class App extends Component {
   };
 
   displayFaceBoxes = (boxes) => {
-    if (!boxes) return;
+    if (!boxes) return (this.boxes = []);
     this.setState({ boxes: boxes });
   };
 
