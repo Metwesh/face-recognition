@@ -20,7 +20,7 @@ const ImageLinkForm = ({ onInputChange, onButtonSubmit }) => {
               type="url"
               placeholder="Image link"
               autoComplete="off"
-              pattern="/^https?:\/\//g"
+              pattern="^https?:\/\/"
               title="Link should start with HTTP/S"
               onChange={onInputChange}
               required
