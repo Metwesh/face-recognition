@@ -129,7 +129,10 @@ export default class App extends Component {
           })
             .then((response) => response.json())
             .then((count) => {
-              if (count === "Unauthorized") return this.onRouteChange("signIn");
+              if (count === "Unauthorized") {
+                window.sessionStorage.removeItem("token");
+                return this.onRouteChange("signIn");
+              }
               this.setState(
                 Object.assign(this.state.user, { entries: count.entries })
               );
