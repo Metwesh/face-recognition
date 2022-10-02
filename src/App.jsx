@@ -91,7 +91,7 @@ export default class App extends Component {
   };
 
   displayFaceBoxes = (boxes) => {
-    if (!boxes) return (this.boxes = []);
+    if (!boxes) return;
     this.setState({ boxes: boxes });
   };
 
@@ -103,6 +103,7 @@ export default class App extends Component {
     this.setState({
       imageURL: this.state.input,
       entries: this.state.user.entries,
+      boxes: [],
     });
     fetch(`${process.env.REACT_APP_IMAGE_URL}`, {
       method: "post",
@@ -137,11 +138,11 @@ export default class App extends Component {
                 Object.assign(this.state.user, { entries: count.entries })
               );
             })
-            .catch((error) => console.log(error));
+            .catch((_error) => (this.boxes = []));
         }
         this.displayFaceBoxes(this.calculateFaceLocations(response));
       })
-      .catch((err) => console.log(err));
+      .catch((_err) => (this.boxes = []));
   };
 
   onRouteChange = (route) => {
