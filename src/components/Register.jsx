@@ -1,6 +1,7 @@
 import React from "react";
+import { Button, FloatingLabel, Form } from "react-bootstrap";
 
-class Register extends React.Component {
+export default class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,6 +21,10 @@ class Register extends React.Component {
     this.setState({ signUpPassword: event.target.value, signUpFailed: false });
   };
 
+  saveAuthTokenInSession = (token) => {
+    window.sessionStorage.setItem("token", token);
+  };
+
   onSubmitSignUp = () => {
     fetch(`${process.env.REACT_APP_REGISTER}`, {
       method: "post",
@@ -33,6 +38,7 @@ class Register extends React.Component {
       .then((response) => response.json())
       .then((user) => {
         if (user.id) {
+          this.saveAuthTokenInSession(user.token);
           this.props.loadUser(user);
           this.props.onRouteChange("home");
         } else {
@@ -47,78 +53,86 @@ class Register extends React.Component {
       this.state;
     let signUpMessage;
     if (signUpFailed && !signUpName && !signUpEmail && !signUpPassword) {
-      signUpMessage = <p>Please input your credentials</p>;
+      signUpMessage = "Please input your credentials";
     } else if (signUpFailed && !signUpName) {
-      signUpMessage = <p>Please input your name</p>;
+      signUpMessage = "Please input your name";
     } else if (signUpFailed && !signUpEmail) {
-      signUpMessage = <p>Please input your E-mail</p>;
+      signUpMessage = "Please input your E-mail";
     } else if (signUpFailed && !signUpPassword) {
-      signUpMessage = <p>Please input your password</p>;
+      signUpMessage = "Please input your password";
     }
     return (
-      <div
+      <Form
+        onSubmit={(e) => e.preventDefault()}
         className="br2 ba dark-gray b--black-10 w-100 w-50-m w-60-1 mw6 center mv4 pa2 shadow-5"
-        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}>
+        style={{ backgroundColor: "rgba(234, 234, 234, 0.5)" }}
+      >
         <main className="pa4 black-80">
-          <div className="measure center">
+          <article className="measure center">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
               <legend className="f3 fw6 ph0 mh0">Register</legend>
               <div className="mt3">
-                <label className="db fw6 lh-copy f6 tl" htmlFor="name">
-                  Name
-                </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="text"
-                  name="name"
-                  id="name"
-                  autoComplete="off"
-                  required
-                  onChange={this.onNameChange}
-                />
+                <FloatingLabel controlId="name" label="Name" className="mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder="John Doe"
+                    name="name"
+                    autoComplete="off"
+                    onChange={this.onNameChange}
+                    required
+                  />
+                </FloatingLabel>
               </div>
               <div className="mt3">
-                <label className="db fw6 lh-copy f6 tl" htmlFor="email-address">
-                  Email
-                </label>
-                <input
-                  className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="email"
-                  name="email-address"
-                  id="email-address"
-                  autoComplete="off"
-                  required
-                  onChange={this.onEmailChange}
-                />
+                <FloatingLabel
+                  controlId="email-address"
+                  label="Email address"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    placeholder="name@example.com"
+                    name="email-address"
+                    autoComplete="off"
+                    onChange={this.onEmailChange}
+                    required
+                  />
+                </FloatingLabel>
               </div>
               <div className="mv3">
-                <label className="db fw6 lh-copy f6 tl" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
-                  type="password"
-                  name="password"
-                  id="password"
-                  required
-                  onChange={this.onPasswordChange}
-                />
+                <FloatingLabel controlId="password" label="Password">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    required
+                    onChange={this.onPasswordChange}
+                  />
+                </FloatingLabel>
               </div>
             </fieldset>
             <div className="flex justify-between items-center">
-              <input
-                onClick={this.onSubmitSignUp}
-                className="b ph3 pv2 input-reset ba white bg-black dim pointer f6 dib br4 mv2"
+              <Button
+                variant="dark"
                 type="submit"
-                value="Register"
-              />
+                onClick={this.onSubmitSignUp}
+                size="lg"
+              >
+                Register
+              </Button>
+              <Button
+                variant="outline-dark"
+                type="button"
+                onClick={() => this.props.onRouteChange("signIn")}
+                size="lg"
+              >
+                Sign in
+              </Button>
             </div>
-          </div>
-          {signUpMessage}
+          </article>
+          {signUpMessage && <p className="mt4 mb0">{signUpMessage}</p>}
         </main>
-      </div>
+      </Form>
     );
   }
 }
-
-export default Register;
