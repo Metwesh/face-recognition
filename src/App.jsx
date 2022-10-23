@@ -117,6 +117,7 @@ export default class App extends Component {
     })
       .then((response) => response.json())
       .then((response) => {
+        if (!this.state.token) this.setState({ token: window.sessionStorage.getItem("token")})
         if (response) {
           fetch(`${process.env.REACT_APP_IMAGE}`, {
             method: "put",

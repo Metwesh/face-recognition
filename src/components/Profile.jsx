@@ -8,6 +8,7 @@ export default class Profile extends React.Component {
       name: this.props.user.name,
       email: this.props.user.email,
       password: "",
+      token: this.props.token
     };
   }
 
@@ -28,11 +29,12 @@ export default class Profile extends React.Component {
   };
 
   onProfileUpdate = (data) => {
+    if (!this.state.token) this.setState({ token: window.sessionStorage.getItem("token")})
     fetch(`${process.env.REACT_APP_PROFILE}/${this.props.user.id}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
-        authorization: `Bearer ${this.props.token}`,
+        authorization: `Bearer ${this.state.token}`,
       },
       body: JSON.stringify({ formInput: data }),
     })
